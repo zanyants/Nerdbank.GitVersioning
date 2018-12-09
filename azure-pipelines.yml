@@ -16,6 +16,8 @@ resources:
     image: andrewarnott/linux-buildagent
   - container: bionic
     image: microsoft/dotnet:2.1-sdk-bionic
+  - container: alpine
+    image: microsoft/dotnet:2.2-sdk-alpine3.8
 
 jobs:
 - job: Windows
@@ -124,6 +126,15 @@ jobs:
   pool:
     vmImage: Ubuntu 16.04 # not a bug. we always use this pool, but use containers for the specific version
   container: bionic
+  steps:
+  - template: azure-pipelines/xplattest-pipeline.yml
+
+- job: Alpine
+  dependsOn: Windows
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+  pool:
+    vmImage: Ubuntu 16.04 # not a bug. we always use this pool, but use containers for the specific version
+  container: alpine
   steps:
   - template: azure-pipelines/xplattest-pipeline.yml
 
